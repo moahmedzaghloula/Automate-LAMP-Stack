@@ -31,16 +31,6 @@ Let’s get your LAMP stack shining bright! Follow these steps to prepare your U
   ```bash
   sudo apt update && sudo apt install ansible
   
-## 🚀 How to Run the Task
-Ready to deploy your LAMP stack? Here’s how to run the Ansible playbook task!
-
-    Navigate to the Project Directory:
-    ```bash
-    cd Automate-LAMP-Stack
-
-    Run the Playbook: Execute the following command to deploy the LAMP stack:
-    ```bash
-    ansible-playbook playbook.yaml
 ## ❤️ Thank You
     
 
