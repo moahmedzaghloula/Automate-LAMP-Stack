@@ -1,0 +1,17 @@
+- name: Install PHP
+  block:
+    - name: Install PHP and Apache PHP module
+      ansible.builtin.apt:
+        name:
+          - php
+          - libapache2-mod-php
+        state: present
+  rescue:
+    - name: Log PHP installation failure
+      ansible.builtin.debug:
+        msg: "Failed to install PHP."
+  always:
+    - name: Ensure Apache is reloaded
+      ansible.builtin.service:
+        name: apache2
+        state: reloaded

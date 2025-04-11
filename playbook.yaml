@@ -1,0 +1,9 @@
+- name: Deploy LAMP Stack on localhost
+  hosts: webservers
+  become: yes
+  vars:
+    mysql_root_password: "19011901"
+  roles:
+    - apache
+    - mysql
+    - php

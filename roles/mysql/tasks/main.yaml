@@ -1,0 +1,45 @@
+- name: Install MySQL
+  block:
+    - name: Install MySQL server and client
+      ansible.builtin.apt:
+        name:
+          - mysql-server
+          - mysql-client
+        state: present
+    - name: Start MySQL service
+      ansible.builtin.service:
+        name: mysql
+        state: started
+        enabled: yes
+  rescue:
+    - name: Log MySQL installation failure
+      ansible.builtin.debug:
+        msg: "Failed to install MySQL."
+
+- name: Set MySQL root password
+  block:
+    - name: Check if root password is set
+      ansible.builtin.command: mysqladmin -u root status
+      register: mysql_status
+      ignore_errors: yes
+    - name: Update root password
+      ansible.builtin.command: mysqladmin -u root password "{{ mysql_root_password }}"
+      when: mysql_status.rc != 0
+  rescue:
+    - name: Log password setup failure
+      ansible.builtin.debug:
+        msg: "Failed to set MySQL root password."
+
+- name: Secure MySQL installation
+  block:
+    - name: Remove anonymous users
+      ansible.builtin.command: mysql -u root -p"{{ mysql_root_password }}" -e "DELETE FROM mysql.user WHERE User='';"
+    - name: Remove test database
+      ansible.builtin.command: mysql -u root -p"{{ mysql_root_password }}" -e "DROP DATABASE IF EXISTS test;"
+    - name: Reload privilege tables
+      ansible.builtin.command: mysql -u root -p"{{ mysql_root_password }}" -e "FLUSH PRIVILEGES;"
+  rescue:
+    - name: Log secure installation failure
+      ansible.builtin.debug:
+        msg: "Failed to secure MySQL."
+  notify: Restart MySQL

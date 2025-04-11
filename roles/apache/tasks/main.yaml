@@ -1,0 +1,26 @@
+- name: Install Apache
+  block:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+    - name: Install Apache2 package
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+  rescue:
+    - name: Log Apache installation failure
+      ansible.builtin.debug:
+        msg: "Failed to install Apache."
+  always:
+    - name: Ensure Apache is enabled and running
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: yes
+
+- name: Copy sample index.php
+  ansible.builtin.template:
+    src: index.php.j2
+    dest: /var/www/html/index.php
+    mode: '0644'
+  notify: Restart Apache
